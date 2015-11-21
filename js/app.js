@@ -7,16 +7,34 @@ angular.module('Discovery', ['ngRoute'])
                 controller: function($http, $scope, myAppConfig){
                     $scope.path = '';
                     $scope.metadata = '';
+                    $scope.imgSrc = '';
                     $scope.handleError = function(response){
                         console.log(response);
                     };
                     $scope.preview = function(path){
                         $scope.loading = true;
+                        $scope.metadata = '';
+                        $scope.imgSrc = '';
                         console.log('Getting preview for '+path);
                         $http({method:'POST', url:'https://api.dropboxapi.com/2/files/get_metadata',
                                 data: {'path':path, "include_media_info": true}
                             })
-                            .success(function(data){console.log(data);$scope.metadata = data;})
+                            .success(function(data){
+                                console.log(data);
+                                $scope.metadata = data;
+                                if (data.media_info.metadata['.tag'] == 'photo'){
+                                    $http({method:'POST',
+                                        url:'https://content.dropboxapi.com/2/files/get_thumbnail',
+                                        headers: {'Dropbox-API-Arg':'{"path":"'+path+'", "size": "w640h480"}'},
+                                        responseType: "blob"
+                                    })
+                                        .success(function(data){
+                                            console.log(data);
+                                            $scope.imgSrc = URL.createObjectURL(data);
+                                        })
+                                        .error(function(response){$scope.handleError(response);});
+                                }
+                            })
                             .error(function(response){$scope.handleError(response);})
                             .finally(function(){$scope.loading = false;});
                     };
@@ -74,4 +92,21 @@ angular.module('Discovery', ['ngRoute'])
             number = Math.floor(Math.log(bytes) / Math.log(1024));
         return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
     }
+    })
+    .filter('truncate', function () {
+        return function (text, length, end) {
+            if (isNaN(length))
+                length = 30;
+
+            if (end === undefined)
+                end = "...";
+
+            if (text.length <= length || text.length - end.length <= length) {
+                return text;
+            }
+            else {
+                return String(text).substring(0, length-end.length-4) + end + String(text).substring(text.length-4, text.length);
+            }
+
+        };
     });
