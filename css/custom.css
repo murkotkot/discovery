@@ -1,0 +1,22 @@
+.overlay
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: 9999;
+    color: white;
+    display: inline-block;
+    vertical-align:middle;
+}
+
+.ajax-loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -64px; /* -1 * image width / 2 */
+    margin-top: -64px;  /* -1 * image height / 2 */
+    display: block;
+}

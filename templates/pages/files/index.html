@@ -1,0 +1,42 @@
+<div class="overlay" ng-show="loading"><img src="images/spinner.gif" class="ajax-loader"/></div>
+
+<div class="container">
+
+    <div class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills pull-left">
+                <li role="presentation" ng-if="path!=''"><a href ng-click="browsePath('')">Home</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table table-hover">
+                <tr ng-repeat="entry in entries">
+                    <td>
+                        <span class="glyphicon glyphicon-file" aria-hidden="true" ng-if="entry['.tag']=='file'"></span>
+                        <span class="glyphicon glyphicon-folder-close" aria-hidden="true" ng-if="entry['.tag']!='file'"></span>
+                        <a href ng-click="preview(entry.path_lower)" ng-if="entry['.tag']=='file'">{{entry.name}}</a>
+                        <a href ng-click="browsePath(entry.path_lower)" ng-if="entry['.tag']!='file'">{{entry.name}}</a>
+                    </td>
+                    <td>
+                        <span ng-if="entry.size">{{entry.size | bytes}}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <div class="jumbotron affix" ng-if="metadata!=''">
+                <h3>{{metadata.name}}</h3>
+                Image size: {{metadata.media_info.metadata.dimensions.width}} x {{metadata.media_info.metadata.dimensions.height}}
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <p>&copy; 2015</p>
+    </footer>
+</div>
+
