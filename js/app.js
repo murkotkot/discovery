@@ -1,4 +1,4 @@
-angular.module('Discovery', ['ngRoute'])
+angular.module('Discovery', ['ngRoute', 'ui.bootstrap'])
     .config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider, myAppConfig) {
         $httpProvider.defaults.headers.common['Authorization'] = '';
         $routeProvider
@@ -8,30 +8,52 @@ angular.module('Discovery', ['ngRoute'])
                     $scope.path = '';
                     $scope.metadata = '';
                     $scope.imgSrc = '';
+                    $scope.newTagValue = '';
+                    $scope.tags = {bikes: {}, cats: {}};
                     $scope.handleError = function(response){
                         console.log(response);
+                    };
+                    $scope.addTag = function(key, obj){
+                        if (Object.prototype.hasOwnProperty.call($scope.tags[key], obj.id)) {
+                            delete $scope.tags[key][obj.id];
+                        } else {
+                            $scope.tags[key][obj.id] = obj.name;
+                        }
+                        console.log($scope.tags[key]);
+                    };
+                    $scope.countTags = function(key){
+                        return Object.keys($scope.tags[key]).length;
+                    };
+                    $scope.isTagged = function(key, obj){
+                        return Object.prototype.hasOwnProperty.call($scope.tags[key], obj.id);
+                    };
+                    $scope.getTags = function(){
+                        return Object.keys($scope.tags);
+                    };
+                    $scope.addNewTag = function(name){
+                        console.log(name);
+                        if (!Object.prototype.hasOwnProperty.call($scope.tags, name)){
+                            $scope.tags[name] = {};
+                            $scope.newTagValue = '';
+                        }
                     };
                     $scope.preview = function(path){
                         $scope.loading = true;
                         $scope.metadata = '';
                         $scope.imgSrc = '';
-                        console.log('Getting preview for '+path);
                         $http({method:'POST', url:'https://api.dropboxapi.com/2/files/get_metadata',
                                 data: {'path':path, "include_media_info": true}
                             })
                             .success(function(data){
-                                console.log(data);
                                 $scope.metadata = data;
-                                if (data.media_info.metadata['.tag'] == 'photo'){
+                                console.log($scope.metadata);
+                                if (data.media_info && data.media_info.metadata['.tag'] == 'photo'){
                                     $http({method:'POST',
-                                        url:'https://content.dropboxapi.com/2/files/get_thumbnail',
-                                        headers: {'Dropbox-API-Arg':'{"path":"'+path+'", "size": "w640h480"}'},
-                                        responseType: "blob"
-                                    })
-                                        .success(function(data){
-                                            console.log(data);
-                                            $scope.imgSrc = URL.createObjectURL(data);
+                                            url:'https://content.dropboxapi.com/2/files/get_thumbnail',
+                                            headers: {'Dropbox-API-Arg':'{"path":"'+path+'", "size": "w640h480"}'},
+                                            responseType: "blob"
                                         })
+                                        .success(function(data){$scope.imgSrc = URL.createObjectURL(data);})
                                         .error(function(response){$scope.handleError(response);});
                                 }
                             })
@@ -42,7 +64,6 @@ angular.module('Discovery', ['ngRoute'])
                         $scope.path = path;
                         $scope.metadata = '';
                         $scope.loading = true;
-                        console.log('Browse path '+path);
                         $http({method:'POST',
                                 url:'https://api.dropboxapi.com/2/files/list_folder',
                                 data:{"path": path, "recursive": false, "include_media_info": false}
@@ -56,10 +77,9 @@ angular.module('Discovery', ['ngRoute'])
                         var client_id=myAppConfig.client_id;
                         var redirect_uri=myAppConfig.redirect_uri;
                         var response_type="token";
-                        var url="https://www.dropbox.com/1/oauth2/authorize?client_id="+client_id+"&redirect_uri="+redirect_uri+
-                        "&response_type="+response_type;
+                        var url="https://www.dropbox.com/1/oauth2/authorize?client_id="+client_id+"&redirect_uri="+
+                            redirect_uri+"&response_type="+response_type;
                         window.location.replace(url);
-                        console.log(url);
                     } else {
                         $scope.browsePath('');
                     }
