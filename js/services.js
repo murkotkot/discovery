@@ -7,7 +7,7 @@ discoveryServices.factory('TagService', [function(){
             if (Object.prototype.hasOwnProperty.call(tags[key], obj.id)) {
                 delete tags[key][obj.id];
             } else {
-                tags[key][obj.id] = obj.name;
+                tags[key][obj.id] = obj.path_lower;
             }
         },
         countTags: function(key){
@@ -23,6 +23,9 @@ discoveryServices.factory('TagService', [function(){
             if (!Object.prototype.hasOwnProperty.call(tags, name)) {
                 tags[name] = {};
             }
+        },
+        browseTag: function(key){
+            return tags[key];
         }
     };
 }]);
@@ -76,5 +79,17 @@ discoveryServices.service('DropboxService', ['$q', '$http', function($q, $http){
                     deferred.reject(error);
                 });
         return deferred.promise;
+    };
+
+    this.browseList = function(list){
+        entries = [];
+        for (var key in list) {
+            entry = {};
+            entry['path_lower'] = list[key];
+            entry['name'] = list[key].replace(/^.*[\\\/]/, '');
+            entry['.tag'] = "file";
+            entries.push(entry);
+        };
+        return entries;
     };
 }]);

@@ -14,7 +14,7 @@
                 </button>
                 <ul class="uib-dropdown-menu" role="menu" aria-labelledby="single-button">
                     <li ng-repeat="tag in getTags()" role="menuitem">
-                        <a href>{{tag}} ({{countTags(tag)}})</a>
+                        <a href ng-click="browseTag(tag)">{{tag}} ({{countTags(tag)}})</a>
                     </li>
                     <li class="divider"></li>
                 </ul>
