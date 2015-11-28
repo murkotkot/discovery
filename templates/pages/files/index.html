@@ -3,11 +3,28 @@
 <div class="container">
 
     <div class="header clearfix">
-        <nav>
+        <nav class="navbar navbar-default">
             <ul class="nav nav-pills pull-left">
                 <li role="presentation" ng-if="path!=''"><a href ng-click="browsePath('')">Home</a></li>
                 <li><a ng-if="path!=''">{{path}}</a></li>
             </ul>
+            <div class="nav nav-pills pull-right" uib-dropdown is-open="status.isopen">
+                <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="disabled">
+                    Tags <span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu" aria-labelledby="single-button">
+                    <li ng-repeat="tag in getTags()" role="menuitem">
+                        <a href ng-click="browseTag(tag)">{{tag}} ({{countTags(tag)}})</a>
+                    </li>
+                    <li class="divider"></li>
+                </ul>
+            </div>
+            <div class="input-group nav nav-pills pull-right col-md-2">
+                <input type="text" class="form-control" placeholder="New tag..." ng-model="newTagValue" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="addNewTag(newTagValue)">Add</button>
+                    </span>
+            </div><!-- /input-group -->
         </nav>
     </div>
 
@@ -33,6 +50,11 @@
                 <div class="caption">
                     <h3>{{metadata.name | truncate}}</h3>
                     <p ng-if="metadata.media_info.metadata.dimensions">Image size: {{metadata.media_info.metadata.dimensions.width}} x {{metadata.media_info.metadata.dimensions.height}}</p>
+                    <p ng-if="metadata">
+                        <span ng-repeat="tag in getTags()">
+                            <a href class="btn btn-default" ng-class="{'btn-primary': isTagged(tag, metadata) == true}" role="button" ng-click="addTag(tag, metadata)">{{tag}}</a>
+                        </span>
+                    </p>
                 </div>
             </div>
         </div>
