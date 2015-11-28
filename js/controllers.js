@@ -1,5 +1,6 @@
 angular.module('DiscoveryControllers', ['DiscoveryServices'])
-    .controller('FilesListCtrl', ['$http','$scope','TagService','DropboxService',function($http, $scope, TagService, DropboxService){
+    .controller('FilesListCtrl', ['$http','$scope','$location','TagService','DropboxService',
+        function($http, $scope, $location, TagService, DropboxService){
         $scope.path = '';
         $scope.metadata = '';
         $scope.imgSrc = '';
@@ -33,10 +34,8 @@ angular.module('DiscoveryControllers', ['DiscoveryServices'])
             $scope.metadata = '';
             $scope.loading = true;
             DropboxService.browsePath(path)
-                .then(function(data){$scope.entries = data.entries})
+                .then(function(data){$scope.entries = data.entries}, function(error){$location.path("/");})
                 .finally(function(){$scope.loading = false;});
-
         };
-        console.log('Running FilesListCtrl');
         $scope.browsePath('');
     }]);
