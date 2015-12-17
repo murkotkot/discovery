@@ -1,4 +1,4 @@
-angular.module('Discovery', ['ngRoute', 'ui.bootstrap', 'DiscoveryControllers', 'DiscoveryFilters', 'DiscoveryServices'])
+angular.module('Discovery', ['ngRoute', 'ui.bootstrap', 'DiscoveryControllers', 'DiscoveryFilters', 'DiscoveryServices', 'DiscoveryDirectives'])
     .config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider, myAppConfig) {
         $httpProvider.defaults.headers.common['Authorization'] = '';
         $routeProvider

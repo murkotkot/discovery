@@ -51,7 +51,7 @@ discoveryServices.service('DropboxService', ['$q', '$http', function($q, $http){
         var deferred = $q.defer();
         $http({method:'POST',
             url:'https://content.dropboxapi.com/2/files/get_thumbnail',
-            headers: {'Dropbox-API-Arg':'{"path":"'+path+'", "size": "w640h480"}'},
+            headers: {'Dropbox-API-Arg':'{"path":"'+path+'", "size": "w128h128"}'},
             responseType: "blob"})
             .then(function (resp) {
                     console.log(resp)
