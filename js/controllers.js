@@ -34,7 +34,7 @@ angular.module('DiscoveryControllers', ['DiscoveryServices'])
                 $scope.metadata = '';
                 $scope.loading = true;
                 DropboxService.browsePath(path)
-                    .then(function(data){$scope.entries = data.entries}, function(error){$location.path("/");})
+                    .then(function(data){$scope.entries = data.entries; $scope.$emit('game:addEntities', data.entries)}, function(error){$location.path("/");})
                     .finally(function(){$scope.loading = false;});
             };
             $scope.browseTag = function(tag){
