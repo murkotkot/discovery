@@ -8,6 +8,11 @@ angular.module('Discovery', ['ngRoute', 'ui.bootstrap', 'DiscoveryControllers', 
                 controllerAs: 'filesCtrl'
             })
             .when('/', {
+                templateUrl: 'templates/pages/files/landing.html',
+                controller: 'FilesListCtrl',
+                controllerAs: 'filesCtrl'
+            })
+            .when('/auth', {
                 template: '',
                 controller: function(myAppConfig){
                     if ($httpProvider.defaults.headers.common['Authorization'] == '') {

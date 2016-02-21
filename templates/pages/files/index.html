@@ -1,69 +1,66 @@
 <div class="overlay" ng-show="loading"><img src="images/spinner.gif" class="ajax-loader"/></div>
 
-<div class="container">
-
-    <div class="header clearfix">
-        <nav class="navbar navbar-default">
-            <ul class="nav nav-pills pull-left">
-                <li role="presentation" ng-if="path!=''"><a href ng-click="browsePath('')">Home</a></li>
-                <li><a ng-if="path!=''">{{path}}</a></li>
+<div class="header clearfix">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <ul class="nav nav-pills pull-left">
+            <li role="presentation" ng-if="path!=''"><a href class="navbar-brand" ng-click="browsePath('')">Home</a></li>
+            <li><a class="navbar-brand" ng-if="path!=''">{{path}}</a></li>
+        </ul>
+        <div class="nav nav-pills pull-right" uib-dropdown is-open="status.isopen">
+            <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="disabled">
+                Tags <span class="caret"></span>
+            </button>
+            <ul class="uib-dropdown-menu" role="menu" aria-labelledby="single-button">
+                <li ng-repeat="tag in getTags()" role="menuitem">
+                    <a href ng-click="browseTag(tag)">{{tag}} ({{countTags(tag)}})</a>
+                </li>
+                <li class="divider"></li>
             </ul>
-            <div class="nav nav-pills pull-right" uib-dropdown is-open="status.isopen">
-                <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="disabled">
-                    Tags <span class="caret"></span>
-                </button>
-                <ul class="uib-dropdown-menu" role="menu" aria-labelledby="single-button">
-                    <li ng-repeat="tag in getTags()" role="menuitem">
-                        <a href ng-click="browseTag(tag)">{{tag}} ({{countTags(tag)}})</a>
-                    </li>
-                    <li class="divider"></li>
-                </ul>
-            </div>
-            <div class="input-group nav nav-pills pull-right col-md-2">
-                <input type="text" class="form-control" placeholder="New tag..." ng-model="newTagValue" />
+        </div>
+        <div class="input-group nav nav-pills pull-right col-md-2">
+            <input type="text" class="form-control" placeholder="New tag..." ng-model="newTagValue" />
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button" ng-click="addNewTag(newTagValue)">Add</button>
                     </span>
-            </div><!-- /input-group -->
-        </nav>
-    </div>
+        </div><!-- /input-group -->
+    </nav>
+</div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <game_canvas></game_canvas>
-            <table class="table table-hover" ng-if="false">
-                <tr ng-repeat="entry in entries">
-                    <td>
-                        <span class="glyphicon glyphicon-file" aria-hidden="true" ng-if="entry['.tag']=='file'"></span>
-                        <span class="glyphicon glyphicon-folder-close" aria-hidden="true" ng-if="entry['.tag']!='file'"></span>
-                        <a href ng-click="preview(entry.path_lower)" ng-if="entry['.tag']=='file'">{{entry.name | truncate}}</a>
-                        <a href ng-click="browsePath(entry.path_lower)" ng-if="entry['.tag']!='file'">{{entry.name}}</a>
-                    </td>
-                    <td>
-                        <span ng-if="entry.size">{{entry.size | bytes}}</span>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="col-md-4">
-            <div class="thumbnail affix" ng-if="metadata!=''">
-                <img ng-if="false" data-ng-src="{{imgSrc}}" />
-                <div class="caption">
-                    <h3>{{metadata.name | truncate}}</h3>
-                    <p ng-if="metadata.media_info.metadata.dimensions">Image size: {{metadata.media_info.metadata.dimensions.width}} x {{metadata.media_info.metadata.dimensions.height}}</p>
-                    <p ng-if="metadata">
-                        <span ng-repeat="tag in getTags()">
-                            <a href class="btn btn-default" ng-class="{'btn-primary': isTagged(tag, metadata) == true}" role="button" ng-click="addTag(tag, metadata)">{{tag}}</a>
-                        </span>
-                    </p>
+<section id="container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <game_canvas></game_canvas>
+                <table class="table table-hover" ng-if="false">
+                    <tr ng-repeat="entry in entries">
+                        <td>
+                            <span class="glyphicon glyphicon-file" aria-hidden="true" ng-if="entry['.tag']=='file'"></span>
+                            <span class="glyphicon glyphicon-folder-close" aria-hidden="true" ng-if="entry['.tag']!='file'"></span>
+                            <a href ng-click="preview(entry.path_lower)" ng-if="entry['.tag']=='file'">{{entry.name | truncate}}</a>
+                            <a href ng-click="browsePath(entry.path_lower)" ng-if="entry['.tag']!='file'">{{entry.name}}</a>
+                        </td>
+                        <td>
+                            <span ng-if="entry.size">{{entry.size | bytes}}</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <div class="thumbnail affix" ng-if="metadata!=''">
+                    <img ng-if="false" data-ng-src="{{imgSrc}}" />
+                    <div class="caption">
+                        <h3>{{metadata.name | truncate}}</h3>
+                        <p ng-if="metadata.media_info.metadata.dimensions">Image size: {{metadata.media_info.metadata.dimensions.width}} x {{metadata.media_info.metadata.dimensions.height}}</p>
+                        <p ng-if="metadata.size">{{metadata.size | bytes}}</p>
+                        <p ng-if="metadata">
+                            <span ng-repeat="tag in getTags()">
+                                <a href class="btn btn-default" ng-class="{'btn-primary': isTagged(tag, metadata) == true}" role="button" ng-click="addTag(tag, metadata)">{{tag}}</a>
+                            </span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    <footer>
-        <p>&copy; 2015</p>
-    </footer>
-</div>
+</section>
 
