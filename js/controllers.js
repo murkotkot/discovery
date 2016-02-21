@@ -43,6 +43,7 @@ angular.module('DiscoveryControllers', ['DiscoveryServices'])
                 $scope.loading = true;
                 files = TagService.browseTag(tag);
                 $scope.entries = DropboxService.browseList(files);
+                $scope.$emit('game:addEntities', $scope.entries);
                 $scope.loading = false;
             };
             $scope.browsePath('');

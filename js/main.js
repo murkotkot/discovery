@@ -1,5 +1,10 @@
 window.createGame = function(scope, entities, mapId, injector) {
+    var ready = false;
     scope.$on('game:addEntities', function(data) {
+        if (ready == false) {
+            setTimeout(scope.$emit('game:addEntities', data), 1000);
+            return;
+        }
         stars = game.add.group();
         stars.enableBody = true;
         dirs = game.add.group();
@@ -29,6 +34,7 @@ window.createGame = function(scope, entities, mapId, injector) {
             item.path_lower = data.targetScope.entries[i]['path_lower'];
             item.tag = data.targetScope.entries[i]['.tag'];
         }
+        falling.play();
         game.world.setBounds(0,0, Object.keys(data.targetScope.entries).length*70 + 140, 600);
     });
 
@@ -47,6 +53,12 @@ window.createGame = function(scope, entities, mapId, injector) {
         game.load.image('picture', 'assets/Picture.png');
         game.load.image('speech', 'assets/speech.svg');
         game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+        game.load.audio('bgm', ['assets/audio/smth.mp3']);
+        game.load.audio('bump', ['assets/audio/Explosion10.wav']);
+        game.load.audio('beep', ['assets/audio/Beep18.wav']);
+        game.load.audio('jump', ['assets/audio/Beep3.wav']);
+        game.load.audio('open', ['assets/audio/Beep4.wav']);
+        game.load.audio('falling', ['assets/audio/Danger2.wav']);
     }
 
     var player;
@@ -57,6 +69,12 @@ window.createGame = function(scope, entities, mapId, injector) {
     var preview = '';
     var score = 0;
     var scoreText;
+
+    var beep;
+    var bump;
+    var jump;
+    var open;
+    var falling;
 
     function create() {
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -86,6 +104,17 @@ window.createGame = function(scope, entities, mapId, injector) {
         cursors = game.input.keyboard.createCursorKeys();
         game.camera.follow(player);
         game.camera.deadzone = new Phaser.Rectangle(100, 100, 600, 400);
+
+        music = game.add.audio('bgm');
+        beep = game.add.audio('beep');
+        bump = game.add.audio('bump');
+        jump = game.add.audio('jump');
+        open = game.add.audio('open');
+        falling = game.add.audio('falling');
+        music.loop = true;
+        music.play();
+
+        ready = true;
     }
 
     var onLoaded = function(){
@@ -137,6 +166,7 @@ window.createGame = function(scope, entities, mapId, injector) {
 
         if (cursors.up.isDown && player.body.touching.down)
         {
+            jump.play();
             player.body.velocity.y = -350;
             if (preview && speech) {
                 preview.kill();
@@ -162,6 +192,7 @@ window.createGame = function(scope, entities, mapId, injector) {
         if (cursors.down.isDown)
         {
             if (!scope.loading) {
+                open.play();
                 console.log(score);
                 if (item.tag == 'folder') {
                     scope.browsePath(item.path_lower);
@@ -176,6 +207,7 @@ window.createGame = function(scope, entities, mapId, injector) {
             loader = new Phaser.Loader(game);
             loader.image('preview', scope.imgSrc );
             loader.onLoadComplete.addOnce(onLoaded);
+            beep.play();
             loader.start();
         }
     }
